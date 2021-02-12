@@ -103,7 +103,7 @@ USER $USERNAME
 WORKDIR /home/$USERNAME
 
 # Get gazebo models early since it is big
-RUN wget -P /tmp/ https://bitbucket.org/osrf/gazebo_models/get/default.tar.gz \
+RUN wget -P /tmp/ https://github.com/osrf/gazebo_models/archive/master.zip \
  && mkdir -p $HOME/.gazebo/models \
  && tar -xvf /tmp/default.tar.gz -C $HOME/.gazebo/models --strip 1 \
  && rm /tmp/default.tar.gz
