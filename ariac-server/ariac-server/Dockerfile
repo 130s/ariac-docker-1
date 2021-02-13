@@ -18,8 +18,10 @@ RUN apt-get update \
 # setup keys and sources for official Gazebo and ROS debian packages
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D2486D2DD83DB69272AFE98867170598AF249743 \
  && echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $UBUNTU_DISTRO main" > /etc/apt/sources.list.d/gazebo-latest.list \
- && apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 \
- && echo "deb http://packages.ros.org/ros/ubuntu ${ROSDISTRO} main" > /etc/apt/sources.list.d/ros-latest.list
+ && apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 \
+ && echo "deb http://packages.ros.org/ros/ubuntu $UBUNTU_DISTRO main" > /etc/apt/sources.list.d/ros-latest.list
+
+RUN echo "DEBUG:" && cat /etc/apt/sources.list.d/ros-latest.list
 
 # install ROS and Gazebo packages
 RUN apt-get update && apt-get install -q -y \
@@ -28,9 +30,8 @@ RUN apt-get update && apt-get install -q -y \
     libgazebo9-dev \
     locales \
     psmisc \
-    python-rosdep \
-    python-rosinstall \
-    python-vcstools \
+    python3-rosdep \
+    python3-vcstool \
     ros-${ROSDISTRO}-robot-state-publisher \
     ros-${ROSDISTRO}-camera-info-manager \
     ros-${ROSDISTRO}-ros-control \
