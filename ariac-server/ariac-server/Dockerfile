@@ -67,7 +67,7 @@ ENV CWS_ARIAC=/home/ariac/ariac_ws/
 
  RUN git clone \
       https://github.com/osrf/ariac-gazebo_ros_pkgs.git /tmp/gazebo_ws \
-      -b ariac-network-${ROSDISTRO}
+      -b ariac-network-melodic  # This won't work for Noetic as Noetic version doesn't seem to be made yet.
  RUN git clone https://github.com/usnistgov/ARIAC.git  $CWS_ARIAC/src
  RUN /bin/bash -c "cp -rf /tmp/gazebo_ws $CWS_ARIAC/src"
 
