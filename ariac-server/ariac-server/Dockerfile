@@ -1,5 +1,5 @@
-ARG ROSDISTRO="noetic"
-FROM ros:${ROSDISTRO}-ros-base
+ARG BASE_DIMG
+FROM $BASE_DIMG
 
 SHELL ["/bin/bash", "-c"]
 
@@ -60,17 +60,17 @@ ENV CWS_ARIAC=/home/$USERNAME/ariac_ws/
 ## && tar -xvf /tmp/default.tar.gz -C $HOME/.gazebo/models --strip 1 \
 ## && rm /tmp/default.tar.gz
 
- #Download and compile ARIAC 2020
- RUN mkdir -p $CWS_ARIAC/src && mkdir -p /tmp/gazebo_ws \
-     && git clone https://github.com/osrf/ariac-gazebo_ros_pkgs.git /tmp/gazebo_ws \
-        -b ariac-network-melodic  # This won't work for Noetic as Noetic version doesn't seem to be made yet.
- RUN git clone --depth=1 https://github.com/usnistgov/ARIAC.git  $CWS_ARIAC/src \
-     && cp -rf /tmp/gazebo_ws $CWS_ARIAC/src \
-     && echo "DEBUG: ${ROSDISTRO}" \
-     && source /opt/ros/${ROSDISTRO}/setup.bash \
-     && cd $CWS_ARIAC \
-     && rosdep init && rosdep install -y --from-paths src --ignore-src \
-     && catkin_make
+#Download and compile ARIAC 2020
+RUN mkdir -p $CWS_ARIAC/src && wget https://raw.githubusercontent.com/130s/ARIAC/feature-cleanup-dependency/dev.repos -O $CWS_ARIAC/src/dev.repos \
+    && cd $CWS_ARIAC && vcs import --debug --skip-existing $CWS_ARIAC < $CWS_ARIAC/src/dev.repos
+# Workaround for apt cannot be run https://stackoverflow.com/a/57930100/577001
+USER root
+RUN echo "DEBUG: ${ROSDISTRO}" \
+    && source /opt/ros/${ROSDISTRO}/setup.bash \
+    && cd $CWS_ARIAC \
+    && sudo apt update && rosdep update && rosdep install -y --from-paths src --ignore-src \
+    && catkin_make
+USER $USERNAME
 
 # setup entrypoint
 COPY ./ariac_entrypoint.sh /
